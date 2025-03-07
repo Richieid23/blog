@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS category (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT
+) ENGINE = InnoDB DEFAULT CHARSET = UTF8;
+
+ALTER TABLE post
+ADD COLUMN category_id BIGINT;
+
+ALTER TABLE post
+ADD FOREIGN KEY fk_post_category(category_id) REFERENCES category(id) ON DELETE CASCADE;
