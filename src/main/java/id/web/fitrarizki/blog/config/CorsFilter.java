@@ -17,7 +17,10 @@ public class CorsFilter implements CorsConfigurationSource {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(
                 Arrays.asList(
-                        "http://localhost:8000"
+                        "http://localhost:8000",
+                        "https://blog-fe-dot-blog-project-453009.uc.r.appspot.com",
+                        "https://blog.cyberboy.tech",
+                        "https://www.blog.cyberboy.tech"
                 )
         );
 

@@ -1,3 +1,4 @@
+service: blog-be
 runtime: java21
 instance_class: F1
 env_variables:

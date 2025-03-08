@@ -10,6 +10,7 @@ import id.web.fitrarizki.blog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +25,13 @@ public class PostService {
     private final CategoryRepository categoryRepository;
 
     public List<GetPostResponse> getPosts(GetPostsRequest request) {
-        Pageable pageable = PageRequest.of(request.getPageNo(), request.getLimit());
+        Pageable pageable = PageRequest.of(request.getPageNo(), request.getLimit(), Sort.by("createdAt").descending());
 
         return postRepository.findAll(pageable).getContent().stream().map(PostMapper.INSTANCE::mapToGetPostResponse).collect(Collectors.toList());
     }
 
     public List<GetPostResponse> getPosts(GetPostsRequest request, boolean isDeleted) {
-        Pageable pageable = PageRequest.of(request.getPageNo(), request.getLimit());
+        Pageable pageable = PageRequest.of(request.getPageNo(), request.getLimit(), Sort.by("publishedAt").descending());
 
         return postRepository.findByIsDeletedAndIsPublished(isDeleted, true, pageable).getContent().stream().map(PostMapper.INSTANCE::mapToGetPostResponse).collect(Collectors.toList());
     }
