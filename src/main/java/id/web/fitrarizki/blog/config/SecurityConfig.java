@@ -24,10 +24,13 @@ public class SecurityConfig {
 
     private final MyUserDetailsService userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
+    private final CorsFilter corsFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(AbstractHttpConfigurer::disable)
+        return http
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsFilter))
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/api/v1/admin/**").authenticated()
                         .anyRequest().permitAll()

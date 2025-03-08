@@ -10,20 +10,17 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class CreatePostRequest {
-
-    @NotNull(message = "Title cannot be empty")
-    @Size(min = 2, message = "Title minimal 2 character")
+@AllArgsConstructor
+public class UpdatePostBySlugRequest {
+    @Size(min=2, message = "minimal 2 characters")
+    @NotNull
     private String title;
-
-    @NotNull(message = "body cannot be empty")
-    @Size(min = 10, message = "Body minimal 10 character")
+    @Size(min=10, message = "minimal 10 characters")
+    @NotNull
     private String body;
-
-    @NotNull(message = "Slug cannot be empty")
-    @Size(min = 2, message = "Slug minimal 2 character")
+    @Size(min=2, message = "minimal 2 characters")
+    @NotNull
     private String slug;
 
     @NotNull

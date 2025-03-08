@@ -1,9 +1,11 @@
 package id.web.fitrarizki.blog.service;
 
 import id.web.fitrarizki.blog.dto.post.*;
+import id.web.fitrarizki.blog.entity.Category;
 import id.web.fitrarizki.blog.entity.Post;
 import id.web.fitrarizki.blog.exception.ApiException;
 import id.web.fitrarizki.blog.mapper.PostMapper;
+import id.web.fitrarizki.blog.repository.CategoryRepository;
 import id.web.fitrarizki.blog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final CategoryRepository categoryRepository;
 
     public List<GetPostResponse> getPosts(GetPostsRequest request) {
         Pageable pageable = PageRequest.of(request.getPageNo(), request.getLimit());
@@ -37,24 +40,30 @@ public class PostService {
     }
 
     public CreatePostResponse createPost(CreatePostRequest request) {
+        Category category = categoryRepository.findById(request.getCategory().getId()).orElseThrow(() -> new ApiException("Category not found", HttpStatus.NOT_FOUND));
+
         if (postRepository.findBySlug(request.getSlug()).isPresent()) {
             throw new ApiException("Post slug already exists", HttpStatus.CONFLICT);
         }
 
         Post post = PostMapper.INSTANCE.mapFromCreatePostResponse(request);
         post.setCommentCount(0L);
+        post.setCategory(category);
         return PostMapper.INSTANCE.mapToCreatePostResponse(postRepository.save(post));
     }
 
-    public GetPostResponse updatePost(String slug, Post post) {
+    public GetPostResponse updatePost(String slug, UpdatePostBySlugRequest request) {
         Post data = postRepository.findBySlugAndIsDeleted(slug, false).orElseThrow(() -> new ApiException("Post not found", HttpStatus.NOT_FOUND));
-        if (postRepository.findBySlug(post.getSlug()).isPresent() && !post.getSlug().equals(slug)) {
+        if (postRepository.findBySlug(request.getSlug()).isPresent() && !request.getSlug().equals(slug)) {
             throw new ApiException("Post slug already exists", HttpStatus.CONFLICT);
         }
 
-        data.setTitle(post.getTitle());
-        data.setBody(post.getBody());
-        data.setSlug(post.getSlug());
+        Category category = categoryRepository.findById(request.getCategory().getId()).orElseThrow(() -> new ApiException("Category not found", HttpStatus.NOT_FOUND));
+
+        data.setTitle(request.getTitle());
+        data.setBody(request.getBody());
+        data.setSlug(request.getSlug());
+        data.setCategory(category);
         return PostMapper.INSTANCE.mapToGetPostResponse(postRepository.save(data));
     }
 

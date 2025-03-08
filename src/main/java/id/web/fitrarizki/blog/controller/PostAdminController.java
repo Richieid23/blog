@@ -37,8 +37,8 @@ public class PostAdminController {
     }
 
     @PutMapping("/{slug}")
-    public GetPostResponse updatePost(@PathVariable String slug, @RequestBody Post post) {
-        return postService.updatePost(slug, post);
+    public GetPostResponse updatePost(@PathVariable String slug, @Valid @RequestBody UpdatePostBySlugRequest request) {
+        return postService.updatePost(slug, request);
     }
 
     @DeleteMapping("/{id}")
