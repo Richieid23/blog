@@ -8,6 +8,7 @@ import id.web.fitrarizki.blog.mapper.PostMapper;
 import id.web.fitrarizki.blog.repository.CategoryRepository;
 import id.web.fitrarizki.blog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,12 +31,14 @@ public class PostService {
         return postRepository.findAll(pageable).getContent().stream().map(PostMapper.INSTANCE::mapToGetPostResponse).collect(Collectors.toList());
     }
 
+    @Cacheable(value = "PostService.getPosts", key = "{#request.pageNo, #isDeleted}")
     public List<GetPostResponse> getPosts(GetPostsRequest request, boolean isDeleted) {
         Pageable pageable = PageRequest.of(request.getPageNo(), request.getLimit(), Sort.by("publishedAt").descending());
 
         return postRepository.findByIsDeletedAndIsPublished(isDeleted, true, pageable).getContent().stream().map(PostMapper.INSTANCE::mapToGetPostResponse).collect(Collectors.toList());
     }
 
+    @Cacheable(value = "PostService.getPostBySlug", key = "#slug")
     public GetPostResponse getPostBySlug(String slug) {
         return postRepository.findBySlugAndIsDeleted(slug, false).map(PostMapper.INSTANCE::mapToGetPostResponse).orElseThrow(() -> new ApiException("Post not found", HttpStatus.NOT_FOUND));
     }
