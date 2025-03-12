@@ -2,6 +2,7 @@ package id.web.fitrarizki.blog.controller;
 
 import id.web.fitrarizki.blog.dto.post.*;
 import id.web.fitrarizki.blog.entity.Post;
+import id.web.fitrarizki.blog.service.ChatGptService;
 import id.web.fitrarizki.blog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostAdminController {
     private final PostService postService;
+    private final ChatGptService chatGptService;
 
     @GetMapping
     public ResponseEntity<List<GetPostResponse>> getPosts(@RequestParam(required = false, defaultValue = "0") Integer pageNo,
@@ -29,6 +31,11 @@ public class PostAdminController {
     @GetMapping("/{slug}")
     public GetPostResponse getPost(@PathVariable String slug) {
         return postService.getPostBySlug(slug);
+    }
+
+    @PostMapping("/generate")
+    public ResponseEntity<GeneratePostResponse> createPost(@Valid @RequestBody GeneratePostRequest request) {
+        return ResponseEntity.ok(GeneratePostResponse.builder().body(chatGptService.generatePostByTitleAndLength(request.getTitle(), request.getLength())).build());
     }
 
     @PostMapping

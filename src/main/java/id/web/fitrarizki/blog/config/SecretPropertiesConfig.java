@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class SecretPropertiesConfig {
     private User user;
     private Jwt jwt;
+    private OpenApi openApi;
 
     @Setter
     @Getter
@@ -27,5 +28,12 @@ public class SecretPropertiesConfig {
     public static class Jwt {
         private String iss;
         private String secretKey;
+    }
+
+    @Setter
+    @Getter
+    public static class OpenApi {
+        private String url;
+        private String apiKey;
     }
 }
