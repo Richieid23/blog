@@ -3,6 +3,7 @@ package id.web.fitrarizki.blog.service;
 import id.web.fitrarizki.blog.config.SecretPropertiesConfig;
 import id.web.fitrarizki.blog.dto.openai.GenerateOpenAiRequest;
 import id.web.fitrarizki.blog.dto.openai.GenerateOpenAiResponse;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class ChatGptService {
     private final RestTemplate restTemplate;
     private final SecretPropertiesConfig secretProp;
 
+    @CircuitBreaker(name = "chatGPTService", fallbackMethod = "generatePostByTitleAndLengthFallback")
     public String generatePostByTitleAndLength(String title, Integer length) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer %s".formatted(secretProp.getOpenApi().getApiKey()));
@@ -41,5 +43,9 @@ public class ChatGptService {
         }
 
         return content[1];
+    }
+
+    public String generatePostByTitleAndLengthFallback(String title, Integer length, Exception e) {
+        return title + ": " + e.getMessage();
     }
 }
