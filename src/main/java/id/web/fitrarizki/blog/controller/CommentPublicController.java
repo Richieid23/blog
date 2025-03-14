@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/v1/public/comments")
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class CommentPublicController {
     }
 
     @PostMapping
-    public CreateCommentResponse createComment(@Valid @RequestBody CreateCommentRequest request) {
+    public CreateCommentResponse createComment(@Valid @RequestBody CreateCommentRequest request) throws IOException {
         return commentService.createComment(request);
     }
 }

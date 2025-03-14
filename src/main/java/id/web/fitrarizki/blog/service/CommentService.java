@@ -1,5 +1,6 @@
 package id.web.fitrarizki.blog.service;
 
+import id.web.fitrarizki.blog.config.SecretPropertiesConfig;
 import id.web.fitrarizki.blog.dto.comment.CreateCommentRequest;
 import id.web.fitrarizki.blog.dto.comment.CreateCommentResponse;
 import id.web.fitrarizki.blog.dto.comment.GetCommentResponse;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final SecretPropertiesConfig secretProp;
 
     public Iterable<GetCommentResponse> getComments(String postSlug, Integer page, Integer limit) {
         Post post = postRepository.findBySlugAndIsDeleted(postSlug, false).orElseThrow(() -> new ApiException("Post not found", HttpStatus.NOT_FOUND));
@@ -37,7 +40,8 @@ public class CommentService {
     }
 
     @Transactional
-    public CreateCommentResponse createComment(CreateCommentRequest request) {
+    public CreateCommentResponse createComment(CreateCommentRequest request) throws IOException {
+        CreateAssessment.createAssessment(secretProp.getGoogle().getProjectId(), secretProp.getGoogle().getRecaptchaKey(), request.getToken(), "createComment");
         Post post = postRepository.findBySlugAndIsDeleted(request.getPost().getSlug(), false).orElseThrow(() -> new ApiException("Post not found", HttpStatus.NOT_FOUND));
 
         Comment comment = CommentMapper.INSTANCE.mapFromCreateCommentRequest(request);

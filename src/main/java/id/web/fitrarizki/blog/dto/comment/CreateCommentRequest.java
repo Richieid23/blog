@@ -26,6 +26,9 @@ public class CreateCommentRequest {
     @Size(min = 2, max = 5_000, message = "Body must be between 2 - 5000 character")
     private String body;
 
+    @NotNull
+    private String token;
+
     @NotNull(message = "Post is required")
     private Post post;
 

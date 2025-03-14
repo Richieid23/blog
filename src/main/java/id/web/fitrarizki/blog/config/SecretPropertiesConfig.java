@@ -15,6 +15,7 @@ public class SecretPropertiesConfig {
     private User user;
     private Jwt jwt;
     private OpenApi openApi;
+    private Google google;
 
     @Setter
     @Getter
@@ -35,5 +36,12 @@ public class SecretPropertiesConfig {
     public static class OpenApi {
         private String url;
         private String apiKey;
+    }
+
+    @Getter
+    @Setter
+    public static class Google {
+        private String projectId;
+        private String recaptchaKey;
     }
 }
